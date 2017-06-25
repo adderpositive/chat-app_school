@@ -1,0 +1,262 @@
+//
+// text mixin
+//
+// text([arg1 ... arg10])
+//
+
+.text(@arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: ''; @arg6: ''; @arg7: ''; @arg8: ''; @arg9: ''; @arg10: '') {
+	._textParse();
+	._parseArgsStep1(@arg1; @arg2; @arg3; @arg4; @arg5; @arg6; @arg7; @arg8; @arg9; @arg10);
+	._parseArgsStep2(@args);
+	
+	._checkFontFace(@fullFamily; @fontFaces);
+	
+	._color(@arg) when not("@{arg}" = "") {
+		color: @arg;
+	}
+	._size(@arg) when not("@{arg}" = "") {
+		font-size: unit(@arg, px);
+		font-size: unit(@arg / 10, rem);
+	}
+	._weight(@arg) when not("@{arg}" = "") {
+		font-weight: @arg;
+	}
+	._style(@arg) when not("@{arg}" = "") {
+		font-style: @arg;
+	}
+	._family(@arg1; @arg2) when not("@{arg1}" = "@{arg2}") and not("@{arg2}" = "") {
+		font-family: @arg1;
+		
+		.fontsLoaded &{
+			font-family: @arg2;
+		}
+	}
+	._family(@arg1; @arg2) when ("@{arg1}" = "@{arg2}") and not("@{arg2}" = "") {
+		font-family: @arg2;
+	}
+	._line(@arg) when not("@{arg}" = "") {
+		line-height: @arg;
+	}
+	._align(@arg) when not("@{arg}" = "") {
+		text-align: @arg;
+	}
+	._decoration(@arg) when not("@{arg}" = "") {
+		text-decoration: @arg;
+	}
+	._transform(@arg) when not("@{arg}" = "") {
+		text-transform: @arg;
+	}
+	._whitespace(@arg) when not("@{arg}" = "") {
+		white-space: @arg;
+	}
+	
+	._color(@color);
+	._size(@size);
+	._weight(@weight);
+	._style(@style);
+	._family(@family; @fullFamily);
+	._line(@line);
+	._align(@align);
+	._decoration(@decoration);
+	._transform(@transform);
+	._whitespace(@whitespace);
+}
+
+._textParse() {
+	._parseArgsStep1(@arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: ''; @arg6: ''; @arg7: ''; @arg8: ''; @arg9: ''; @arg10: ''){
+		@args: ~`(function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
+			var i,
+				result = '',
+				text = {
+					style: '',
+					weight: '',
+					size: '',
+					line: '',
+					family: '',
+					transform: '',
+					whitespace: '',
+					decoration: '',
+					color: '',
+					align: ''
+				};
+
+			//assign all arguments to properties
+			for (i = 0; i < arguments.length; i++) {
+				if (arguments[i] !== null) {
+					assignToProperty(arguments[i]);
+				}
+			}
+
+			//concate for further processing
+			result = '"';
+			result += text.color + "|";
+			result += text.size + "|";
+			result += text.weight + "|";
+			result += text.style + "|";
+			result += text.family + "|";
+			result += text.line + "|";
+			result += text.align + "|";
+			result += text.decoration + "|";
+			result += text.transform + "|";
+			result += text.whitespace;
+			result += '"';
+
+			return result;
+
+			function assignToProperty(arg) {
+				if (isString(arg)) {
+					//string is definitely font-family
+					text.family = arg;
+				} else if (isUnit(arg)) {
+					text.line = arg;
+				} else if (isNumber(arg)) {
+					//if it is number, it can be font-size, font-weight or line-height
+					if (Number(arg) < 5) {
+						text.line = arg;
+					} else if (Number(arg) < 1000 && Number(arg) % 100 == 0) {
+						text.weight = arg;
+					} else {
+						text.size = arg;
+					}
+				} else if (isColor(arg)) {
+					//well, color is simply color
+					text.color = arg;
+				} else if (isKeyword(arg)) {
+					if (isWeightKeyword(arg)) {
+						//if its normal, it can be also font-style or white-space
+						if (arg == "normal") {
+							if (text.weight === '') {
+								text.weight = arg;
+							} else if (text.style === '') {
+								text.style = arg;
+							} else {
+								text.whitespace = arg;
+							}
+						} else {
+							text.weight = arg
+						}
+					} else if (isStyleKeyword(arg)) {
+						text.style = arg;
+					} else if (isFamilyKeyword(arg)) {
+						text.family = arg;
+					} else if (isDecorationKeyword(arg)) {
+						//if its none, it can be also text-transform
+						if (arg == "none") {
+							if (text.decoration === '') {
+								text.decoration = arg;
+							} else {
+								text.transform = arg;
+							}
+						} else {
+							text.decoration = arg
+						}
+					} else if (isTransformKeyword(arg)) {
+						text.transform = arg;
+					} else if (isAlignKeyword(arg)) {
+						text.align = arg;
+					} else if (isWhitespaceKeyword(arg)) {
+						text.whitespace = arg;
+					} else {
+						text.color = arg;
+					}
+				}
+			}
+			
+			function isUnit(arg) {
+				return /^-?\d+(\.\d+)?[a-z]/.test(arg);
+			}
+			
+			function isString(arg) {
+				//string starts with quote
+				return /^('|\")/.test(arg);
+			}
+
+			function isNumber(arg) {
+				return /^-?\d/.test(arg);
+			}
+
+			function isColor(arg) {
+				//test for hex, rgb(a) or hsl(a) notation
+				return /^(#|rgb|rgba|hsl|hsla)/.test(arg);
+			}
+
+			function isKeyword(arg) {
+				return /^[a-z]/.test(arg);
+			}
+
+			function isStyleKeyword(arg) {
+				return /normal|italic|oblique/.test(arg);
+			}
+
+			function isWeightKeyword(arg) {
+				return /normal|bold|lighter|bolder/.test(arg);
+			}
+			
+			function isFamilyKeyword(arg) {
+				return /sans-serif|serif|fantasy|cursive|monospace/.test(arg);
+			}
+			
+			function isTransformKeyword(arg) {
+				return /capitalize|uppercase|lowercase|none/.test(arg);
+			}
+
+			function isDecorationKeyword(arg) {
+				return /underline|overline|line-through|blink|none/.test(arg);
+			}
+
+			function isAlignKeyword(arg) {
+				return /left|right|center|justify/.test(arg);
+			}
+
+			function isWhitespaceKeyword(arg) {
+				return /normal|nowrap|pre|pre-wrap|pre-line/.test(arg);
+			}
+		}(
+			(function(){var e="@{arg1}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg2}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg3}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg4}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg5}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg6}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg7}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg8}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg9}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg10}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}())
+		))`;
+	}
+
+	._parseArgsStep2(@args) {
+		@color: ~`(function(args) { return args.split("|")[0]; }(@{args}))`;
+		@size: ~`(function(args) { var r = args.split("|")[1]; return r == "" ? "" : Number(r); }(@{args}))`;
+		@weight: ~`(function(args) { return args.split("|")[2]; }(@{args}))`;
+		@style: ~`(function(args) { return args.split("|")[3]; }(@{args}))`;
+		@fullFamily: ~`(function(args) { return args.split("|")[4]; }(@{args}))`;
+		@line: ~`(function(args) { return args.split("|")[5]; }(@{args}))`;
+		@align: ~`(function(args) { return args.split("|")[6]; }(@{args}))`;
+		@decoration: ~`(function(args) { return args.split("|")[7]; }(@{args}))`;
+		@transform: ~`(function(args) { return args.split("|")[8]; }(@{args}))`;
+		@whitespace: ~`(function(args) { return args.split("|")[9]; }(@{args}))`;
+	}
+	
+	._checkFontFace(@fontFamily; @fontFace) {
+		@family: ~`(function(fontFamily, fontFace) {
+			if (!fontFace) {
+				return fontFamily;
+			}
+			
+			var faces = fontFace.replace(/ *, */g, ",").split(","),
+				families = fontFamily.replace(/ *, */g, ",").split(","),
+				family = families[0];
+			
+			if (faces.indexOf(family) > -1) {
+				families.shift();
+				return families.join(",");
+			} else {
+				return fontFamily;
+			}
+		}(
+			(function(){var e="@{fontFamily}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{fontFace}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}())
+		))`;
+	}
+}

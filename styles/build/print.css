@@ -1,0 +1,44 @@
+/********************************************
+********************************************* 
+
+	=====================================
+	CSS for chat app
+	=====================================
+	
+	Author:         Martin Homola
+	Resets:         Normalize, Reboot (Bootstrap)
+	Framework:      Skeleton
+	Methodology:    BEM
+	Fonts:          Raleway, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif
+
+	(C) Martin Homola
+
+
+********************************************
+**********************************************/
+/* fonts of web
+   ============
+
+   Used 
+  */
+/*	Print
+	=====
+
+*/
+@page {
+  size: auto;
+  margin: 10mm 10mm 15mm 10mm;
+}
+html,
+body {
+  font-family: Arial, Helvetica, Tahoma, sans-serif;
+  background-color: #fff !important;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  color: #383737;
+}
+a,
+.link {
+  color: #000;
+  text-decoration: none;
+}

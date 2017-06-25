@@ -1,0 +1,26 @@
+//
+// font-face rule
+// 
+// fontFace(name, file)
+// fontFace(name, file, weight)
+// fontFace(name, file, weight, style)
+//
+// alias fontface(...) also works
+// global variable fontsDir must be specified
+//
+
+.fontFace(@name; @file; @weight: normal; @style: normal) {
+	@font-face{
+		font-family: @name;
+		font-weight: @weight;
+		font-style: @style;
+		src: url("@{fontsDir}@{file}.eot");
+		src: url("@{fontsDir}@{file}.eot?#iefix") format("embedded-opentype"),
+			url("@{fontsDir}@{file}.woff") format("woff"),
+			url("@{fontsDir}@{file}.ttf") format("truetype");
+	}
+}
+
+.fontface(@name; @file; @weight: normal; @style: normal) {
+	.fontFace(@name; @file; @weight; @style);
+}

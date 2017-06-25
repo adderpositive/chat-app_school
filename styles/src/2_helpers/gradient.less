@@ -1,0 +1,300 @@
+//
+// linear gradient mixin and linear gradient hover mixin
+//
+// gradient(color1; color2)
+// gradient(stop1; stop2)
+// gradient(direction; color1; color2)
+// gradient(direction; stop1; stop2)
+// gradient(fallback; color1; color2)
+// gradient(fallback; stop1; stop2)
+// gradient(direction; fallback; color1; color2)
+// gradient(direction; fallback; stop1; stop2)
+// gradient(stop1; stop2; stop3)
+// gradient(direction; stop1; stop2; stop3)
+// gradient(fallback; stop1; stop2; stop3)
+// gradient(direction; fallback; stop1; stop2; stop3)
+// gradient(stop1; stop2; stop3; stop4)
+// gradient(direction; stop1; stop2; stop3; stop4)
+// gradient(fallback; stop1; stop2; stop3; stop4)
+// gradient(direction; fallback; stop1; stop2; stop3; stop4)
+//
+// gradienHover(color1; color2; color3; color4)
+// gradienHover(direction; color1; color2; color3; color4)
+// gradienHover(fallback1; fallback2; color1; color2; color3; color4)
+// gradienHover(direction; fallback1; fallback2; color1; color2; color3; color4)
+// gradienHover(color1; color2; color3; color4; duration)
+// gradienHover(direction; color1; color2; color3; color4; duration)
+// gradienHover(fallback1; fallback2; color1; color2; color3; color4; duration)
+// gradienHover(direction; fallback1; fallback2; color1; color2; color3; color4; duration)
+//
+// color argument represents stop color; position is autofilled to 0% or 100%
+// stop argument consist of color and position, order does not matter
+// fallback represents fallback color for browser which do not support gradients; if fallback is omited, than fallback color is calculated from stop colors
+// direction can be horizontal or vertical
+// in hover mixins, if duration is omited, than it is set to .2s
+// in hover mixins, direction can also be horizontalRevert and verticalRevert, in which case normal state gradient is from color3 to color4 and hover is from color1 to color2
+
+//two-stop gradients shortcuts
+.gradient(@color1; @color2) when (iscolor(@color1)) and (iscolor(@color2)) {
+	.gradient(vertical; nofallback; @color1 0%; @color2 100%);
+}
+
+.gradient(@stop1; @stop2) when (length(@stop1) = 2) and (length(@stop2) = 2) {
+	.gradient(vertical; nofallback; @stop1; @stop2);
+}
+
+.gradient(@direction; @color1; @color2) when (iscolor(@color1)) and (iscolor(@color2)) and (iskeyword(@direction)) {
+	.gradient(@direction; nofallback; @color1 0%; @color2 100%);
+}
+
+.gradient(@direction; @stop1; @stop2) when (length(@stop1) = 2) and (length(@stop2) = 2) and (iskeyword(@direction)) {
+	.gradient(@direction; nofallback; @stop1; @stop2);
+}
+
+.gradient(@fallback; @color1; @color2) when (iscolor(@color1)) and (iscolor(@color2)) and (iscolor(@fallback)) {
+	.gradient(vertical; @fallback; @color1 0%; @color2 100%);
+}
+
+.gradient(@fallback; @stop1; @stop2) when (length(@stop1) = 2) and (length(@stop2) = 2) and (iscolor(@fallback)) {
+	.gradient(vertical; @fallback; @stop1; @stop2);
+}
+
+.gradient(@direction; @fallback; @color1; @color2) when (iscolor(@color1)) and (iscolor(@color2)) and (iscolor(@fallback)) and (iskeyword(@direction)) {
+	.gradient(@direction; @fallback; @color1 0%; @color2 100%);
+}
+
+//two-stop gradient mixin
+.gradient(@direction; @fallback; @stop1; @stop2) when (length(@stop1) = 2) and (length(@stop2) = 2) and not(length(@fallback) = 2) and (iskeyword(@direction)) {
+	//import keywords based on gradient direction
+	._grad(@direction);
+	
+	//parse color and position from stop
+	.parseColorAndPosition1(@stop1);
+	.parseColorAndPosition2(@stop2);
+	
+	//create alpha-hex color definiton for IE
+	@hex1: argb(@color1);
+	@hex2: argb(@color2);
+	
+	//get fallback color
+	.getFallback(@fallback; @color1; @color2);
+	
+	//showtime
+	background: @colorFallback;
+	background: -moz-linear-gradient(@vendor, @color1 @position1, @color2 @position2);
+	background: -webkit-gradient(linear, @webkit1, @webkit2, color-stop(@position1, @color1), color-stop(@position2, @color2));
+	background: -webkit-linear-gradient(@vendor, @color1 @position1, @color2 @position2);
+	background: -o-linear-gradient(@vendor, @color1 @position1, @color2 @position2);
+	background: -ms-linear-gradient(@vendor, @color1 @position1, @color2 @position2);
+	background: linear-gradient(@w3c, @color1 @position1, @color2 @position2);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{hex1}', endColorstr='@{hex2}', GradientType=@ie);
+}
+
+//three-stop gradients shortcuts
+.gradient(@stop1; @stop2; @stop3) when (length(@stop1) = 2) and (length(@stop2) = 2) and (length(@stop3) = 2) {
+	.gradient(vertical; nofallback; @stop1; @stop2; @stop3);
+}
+
+.gradient(@direction; @stop1; @stop2; @stop3) when (length(@stop1) = 2) and (length(@stop2) = 2) and (length(@stop3) = 2) and (iskeyword(@direction)) {
+	.gradient(@direction; nofallback; @stop1; @stop2; @stop3);
+}
+
+.gradient(@fallback; @stop1; @stop2; @stop3) when (length(@stop1) = 2) and (length(@stop2) = 2) and (length(@stop3) = 2) and (iscolor(@fallback)) {
+	.gradient(vertical; @fallback; @stop1; @stop2; @stop3);
+}
+
+//three-stop gradient mixin
+.gradient(@direction; @fallback; @stop1; @stop2; @stop3) when (length(@stop1) = 2) and (length(@stop2) = 2) and (length(@stop3) = 2) and not(length(@fallback) = 2) and (iskeyword(@direction)) {
+	//import keywords based on gradient direction
+	._grad(@direction);
+	
+	//parse color and position from stop
+	.parseColorAndPosition1(@stop1);
+	.parseColorAndPosition2(@stop2);
+	.parseColorAndPosition3(@stop3);
+	
+	//create alpha-hex color definiton for IE
+	@hex1: argb(@color1);
+	@hex3: argb(@color3);
+	
+	//get fallback color
+	.getFallback(@fallback; @color1; @color3);
+	
+	//showtime
+	background: @colorFallback;
+	background: -moz-linear-gradient(@vendor, @color1 @position1, @color2 @position2, @color3 @position3);
+	background: -webkit-gradient(linear, @webkit1, @webkit2, color-stop(@position1, @color1), color-stop(@position2, @color2), color-stop(@position3, @color3));
+	background: -webkit-linear-gradient(@vendor, @color1 @position1, @color2 @position2, @color3 @position3);
+	background: -o-linear-gradient(@vendor, @color1 @position1, @color2 @position2, @color3 @position3);
+	background: -ms-linear-gradient(@vendor, @color1 @position1, @color2 @position2, @color3 @position3);
+	background: linear-gradient(@w3c, @color1 @position1, @color2 @position2, @color3 @position3);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{hex1}', endColorstr='@{hex3}', GradientType=@ie);
+}
+
+//four-stop gradients shortcuts
+.gradient(@stop1; @stop2; @stop3; @stop4) when (length(@stop1) = 2) and (length(@stop2) = 2) and (length(@stop3) = 2) and (length(@stop4) = 2) {
+	.gradient(vertical; nofallback; @stop1; @stop2; @stop3; @stop4);
+}
+
+.gradient(@direction; @stop1; @stop2; @stop3; @stop4) when (length(@stop1) = 2) and (length(@stop2) = 2) and (length(@stop3) = 2) and (length(@stop4) = 2) and (iskeyword(@direction)) {
+	.gradient(@direction; nofallback; @stop1; @stop2; @stop3; @stop4);
+}
+
+.gradient(@fallback; @stop1; @stop2; @stop3; @stop4) when (length(@stop1) = 2) and (length(@stop2) = 2) and (length(@stop3) = 2) and (length(@stop4) = 2) and (iscolor(@fallback)) {
+	.gradient(vertical; @fallback; @stop1; @stop2; @stop3; @stop4);
+}
+
+//four-stop gradient mixin
+.gradient(@direction; @fallback; @stop1; @stop2; @stop3; @stop4) when (length(@stop1) = 2) and (length(@stop2) = 2) and (length(@stop3) = 2) and (length(@stop4) = 2) and not(length(@fallback) = 2) and (iskeyword(@direction)) {
+	//import keywords based on gradient direction
+	._grad(@direction);
+	
+	//parse color and position from stop
+	.parseColorAndPosition1(@stop1);
+	.parseColorAndPosition2(@stop2);
+	.parseColorAndPosition3(@stop3);
+	.parseColorAndPosition4(@stop4);
+	
+	//create alpha-hex color definiton for IE
+	@hex1: argb(@color1);
+	@hex4: argb(@color4);
+	
+	//get fallback color
+	.getFallback(@fallback; @color1; @color3);
+	
+	//showtime
+	background: @colorFallback;
+	background: -moz-linear-gradient(@vendor, @color1 @position1, @color2 @position2, @color3 @position3, @color4 @position4);
+	background: -webkit-gradient(linear, @webkit1, @webkit2, color-stop(@position1, @color1), color-stop(@position2, @color2), color-stop(@position3, @color3), color-stop(@position4, @color4));
+	background: -webkit-linear-gradient(@vendor, @color1 @position1, @color2 @position2, @color3 @position3, @color4 @position4);
+	background: -o-linear-gradient(@vendor, @color1 @position1, @color2 @position2, @color3 @position3, @color4 @position4);
+	background: -ms-linear-gradient(@vendor, @color1 @position1, @color2 @position2, @color3 @position3, @color4 @position4);
+	background: linear-gradient(@w3c, @color1 @position1, @color2 @position2, @color3 @position3, @color4 @position4);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='@{hex1}', endColorstr='@{hex4}', GradientType=@ie);
+}
+
+//gradient with hover shortcuts
+.gradientHover(@color1; @color2; @color3; @color4; @duration: .2s) when (iscolor(@color1)) {
+	.gradientHover(vertical; nofallback; nofallback; @color1; @color2; @color3; @color4; @duration);
+}
+
+.gradientHover(@direction; @color1; @color2; @color3; @color4; @duration: .2s) when (iskeyword(@direction)) {
+	.gradientHover(@direction; nofallback; nofallback; @color1; @color2; @color3; @color4; @duration);
+}
+
+.gradientHover(@fallback1; @fallback2; @color1; @color2; @color3; @color4; @duration: .2s) when (iscolor(@fallback1)) {
+	.gradientHover(vertical; @fallback1; @fallback2; @color1; @color2; @color3; @color4; @duration);
+}
+
+//gradient with hover mixin
+.gradientHover(@direction; @fallback1; @fallback2; @color1; @color2; @color3; @color4; @duration: .2s) when (iskeyword(@direction)) {
+	//import keywords based on gradient direction
+	._gradHover(@direction);
+	
+	//get fallback colors
+	.getFallback(@fallback1; @color1; @color2);
+	
+	.gradient(@gradientDirection; @colorFallback; @color1 0%; @color2 33.33%; @color3 66.66%; @color4 100%);
+	background-size: @size;
+	background-position: @positionStart;
+	transition: background-position @duration, background-color @duration;
+	
+	&:hover{
+		.getFallback(@fallback2; @color3; @color4);
+		background-color: @colorFallback;
+		background-position: @positionEnd;
+	}
+}
+
+
+
+//compute fallback color
+.getFallback(@fallback; @color1; @color2) when (iscolor(@fallback)) {
+	@colorFallback: @fallback;
+}
+.getFallback(@fallback; @color1; @color2) when (default()) {
+	@colorFallback: average(@color1, @color2);
+}
+
+//color and position parsing mixins
+.parseColorAndPosition1(@stop) when (iscolor(extract(@stop, 1))) {
+	@color1: extract(@stop, 1);
+	@position1: extract(@stop, 2);
+}
+.parseColorAndPosition1(@stop) when not(iscolor(extract(@stop, 1))) {
+	@color1: extract(@stop, 2);
+	@position1: extract(@stop, 1);
+}
+
+.parseColorAndPosition2(@stop) when (iscolor(extract(@stop, 1))) {
+	@color2: extract(@stop, 1);
+	@position2: extract(@stop, 2);
+}
+.parseColorAndPosition2(@stop) when not(iscolor(extract(@stop, 1))) {
+	@color2: extract(@stop, 2);
+	@position2: extract(@stop, 1);
+}
+
+.parseColorAndPosition3(@stop) when (iscolor(extract(@stop, 1))) {
+	@color3: extract(@stop, 1);
+	@position3: extract(@stop, 2);
+}
+.parseColorAndPosition3(@stop) when not(iscolor(extract(@stop, 1))) {
+	@color3: extract(@stop, 2);
+	@position3: extract(@stop, 1);
+}
+
+.parseColorAndPosition4(@stop) when (iscolor(extract(@stop, 1))) {
+	@color4: extract(@stop, 1);
+	@position4: extract(@stop, 2);
+}
+.parseColorAndPosition4(@stop) when not(iscolor(extract(@stop, 1))) {
+	@color4: extract(@stop, 2);
+	@position4: extract(@stop, 1);
+}
+
+//keywords definitons
+._grad(horizontal) {
+	@vendor: left;
+	@webkit1: left top;
+	@webkit2: right bottom;
+	@w3c: to right;
+	@ie: 1;
+}
+
+._grad(vertical) {
+	@vendor: top;
+	@webkit1: left top;
+	@webkit2: left bottom;
+	@w3c: to bottom;
+	@ie: 0;
+}
+
+//size and position definitions for hover
+._gradHover(horizontal) {
+	@size: 300% 100%;
+	@positionStart: 0 0;
+	@positionEnd: 100% 0;
+	@gradientDirection: horizontal;
+}
+
+._gradHover(vertical) {
+	@size: 100% 300%;
+	@positionStart: 0 0;
+	@positionEnd: 0 100%;
+	@gradientDirection: vertical;
+}
+
+._gradHover(horizontalRevert) {
+	@size: 300% 100%;
+	@positionStart: 100% 0;
+	@positionEnd: 0 0;
+	@gradientDirection: horizontal;
+}
+
+._gradHover(verticalRevert) {
+	@size: 100% 300%;
+	@positionStart: 0 100%;
+	@positionEnd: 0 0;
+	@gradientDirection: vertical;
+}

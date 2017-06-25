@@ -1,0 +1,207 @@
+//
+// geometric object mixins
+//
+// triangles:
+// triangleL(size; color)
+// triangleL(width; height; color)
+// triangleR(size; color)
+// triangleR(width; height; color)
+// triangleT(size; color)
+// triangleT(width; height; color)
+// triangleB(size; color)
+// triangleB(width; height; color)
+// triangleLB(size; color)
+// triangleLB(width; height; color)
+// triangleRB(size; color)
+// triangleRB(width; height; color)
+// triangleLT(size; color)
+// triangleLT(width; height; color)
+// triangleRT(size; color)
+// triangleRT(width; height; color)
+//
+// rectangles:
+// .rect(size; color)
+// .rect(width; height; color)
+// .square(size; color) - alias for .rect(size; color)
+//
+// ellipses and circle
+// .ellipse(size; color)
+// .ellipse(width; height; color)
+// .circle(size; color) - alias for .ellipse(size; color)
+
+//triangle to left
+.triangleL(@size; @color) {
+	.triangleL(@size; @size; @color);
+}
+
+.triangleL(@width; @height; @color) {
+	@widthPx: unit(@width, px);
+	@heightPx: unit(@height, px);
+	
+	width: 0;
+	height: 0;
+	border-width: @heightPx / 2 @widthPx @heightPx / 2 0;
+	border-style: solid;
+	border-color: transparent @color transparent transparent;
+}
+
+//triangle to right
+.triangleR(@size; @color) {
+	.triangleR(@size; @size; @color);
+}
+
+.triangleR(@width; @height; @color) {
+	@widthPx: unit(@width, px);
+	@heightPx: unit(@height, px);
+	
+	width: 0;
+	height: 0;
+	border-width: @heightPx / 2 0 @heightPx / 2 @widthPx;
+	border-style: solid;
+	border-color: transparent transparent transparent @color;
+}
+
+//triangle to top
+.triangleT(@size; @color) {
+	.triangleT(@size; @size; @color);
+}
+
+.triangleT(@width; @height; @color) {
+	@widthPx: unit(@width, px);
+	@heightPx: unit(@height, px);
+	
+	width: 0;
+	height: 0;
+	border-width: 0 @widthPx / 2 @heightPx;
+	border-style: solid;
+	border-color: transparent transparent @color;
+}
+
+//triangle to bottom
+.triangleB(@size; @color) {
+	.triangleB(@size; @size; @color);
+}
+
+.triangleB(@width; @height; @color) {
+	@widthPx: unit(@width, px);
+	@heightPx: unit(@height, px);
+	
+	width: 0;
+	height: 0;
+	border-width: @heightPx @widthPx / 2 0;
+	border-style: solid;
+	border-color: @color transparent transparent;
+}
+
+//triangle to left-bottom
+.triangleLB(@size; @color) {
+	.triangleLB(@size; @size; @color);
+}
+
+.triangleLB(@width; @height; @color) {
+	@widthPx: unit(@width, px);
+	@heightPx: unit(@height, px);
+	
+	width: 0;
+	height: 0;
+	border-width: @heightPx / 2 @widthPx / 2;
+	border-style: solid;
+	border-color: transparent transparent @color @color;
+}
+
+//triangle to right-bottom
+.triangleRB(@size; @color) {
+	.triangleRB(@size; @size; @color);
+}
+
+.triangleRB(@width; @height; @color) {
+	@widthPx: unit(@width, px);
+	@heightPx: unit(@height, px);
+	
+	width: 0;
+	height: 0;
+	border-width: @heightPx / 2 @widthPx / 2;
+	border-style: solid;
+	border-color: transparent @color @color transparent;
+}
+
+//triangle to left-top
+.triangleLT(@size; @color) {
+	.triangleLT(@size; @size; @color);
+}
+
+.triangleLT(@width; @height; @color) {
+	@widthPx: unit(@width, px);
+	@heightPx: unit(@height, px);
+	
+	width: 0;
+	height: 0;
+	border-width: @heightPx / 2 @widthPx / 2;
+	border-style: solid;
+	border-color: @color transparent transparent @color;
+}
+
+//triangle to right-top
+.triangleRT(@size; @color) {
+	.triangleRT(@size; @size; @color);
+}
+
+.triangleRT(@width; @height; @color) {
+	@widthPx: unit(@width, px);
+	@heightPx: unit(@height, px);
+	
+	width: 0;
+	height: 0;
+	border-width: @heightPx / 2 @widthPx / 2;
+	border-style: solid;
+	border-color: @color @color transparent transparent;
+}
+
+//rectangle and square
+.rect(@size; @color) {
+	.rect(@size; @size; @color);
+}
+
+.rect(@width; @height; @color) when (isunit(@width, '')) and (isunit(@height, '')) {
+	width: unit(@width, px);
+	height: unit(@height, px);
+	background-color: @color;
+}
+
+.rect(@width; @height; @color) when not(isunit(@width, '')) and (isunit(@height, '')) {
+	width: @width;
+	height: unit(@height, px);
+	background-color: @color;
+}
+
+.rect(@width; @height; @color) when (isunit(@width, '')) and not(isunit(@height, '')) {
+	width: unit(@width, px);
+	height: @height;
+	background-color: @color;
+}
+
+.rect(@width; @height; @color) when not(isunit(@width, '')) and not(isunit(@height, '')) {
+	width: @width;
+	height: @height;
+	background-color: @color;
+}
+
+.square(@size; @color) {
+	.rect(@size; @size; @color);
+}
+
+//ellipse and circle
+.ellipse(@size; @color) {
+	.ellipse(@size; @size; @color);
+}
+
+.ellipse(@width; @height; @color) {
+	width: unit(@width, px);
+	height: unit(@height, px);
+	background-color: @color;
+	border-radius: 50%;
+}
+
+.circ(@size; @color) {
+	.ellipse(@size; @size; @color);
+}

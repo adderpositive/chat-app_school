@@ -1,0 +1,88 @@
+//
+// sprite mixins
+//
+// .spriteVars(sprite; image)
+// - gets data about sprite image and makes them accessible thru variables
+// - list of variables:
+// - spriteName, spriteWidth, spriteHeight, spriteSize, spriteX, spriteY, spriteXY,
+//   spriteOffsetX, spriteOffsetY, spriteOffset, spriteFile, spriteUrl, spriteImage,
+//   spriteTotalWidth, spriteTotalHeight, spriteTotalSize
+// 
+// .spriteSize(sprite; image)
+// - sets width and height to sprite image dimensions
+//
+// .spriteWidth(sprite; image)
+// - sets width to sprite image width
+//
+// .spriteHeight(sprite; image)
+// - sets height to sprite image height
+//
+// .spriteBgSize(sprite; image)
+// - sets background-size to sprite image dimensions
+//
+// .spriteBgPosition(sprite; image)
+// - sets background-position to sprite image offset
+//
+// .spriteBgImage(sprite; image)
+// - sets backgorund-image to sprite image (@imagesDir path is included)
+//
+
+.spriteVars(@sprite; @image) {
+	@_spriteVarName: "@{sprite}-@{image}"; //concatenate var name
+	
+	@spriteData: @@_spriteVarName; //get list variable with sprite data
+	
+	@spriteName: extract(@spriteData, 10);
+	@spriteWidth: extract(@spriteData, 5);
+	@spriteHeight: extract(@spriteData, 6);
+	@spriteSize: @spriteWidth @spriteHeight;
+	@spriteX: extract(@spriteData, 1);
+	@spriteY: extract(@spriteData, 2);
+	@spriteXY: @spriteX @spriteY;
+	@spriteOffsetX: extract(@spriteData, 3);
+	@spriteOffsetY: extract(@spriteData, 4);
+	@spriteOffset: @spriteOffsetX @spriteOffsetY;
+	@spriteFile: extract(@spriteData, 9);
+	@spriteUrl: url(@spriteFile);
+	@spriteImage: url('@{imagesDir}@{spriteFile}');
+	@spriteTotalWidth: extract(@spriteData, 7);
+	@spriteTotalHeight: extract(@spriteData, 8);
+	@spriteTotalSize: @spriteTotalWidth @spriteTotalHeight;
+}
+
+.spriteSize(@sprite; @image) {
+	.spriteVars(@sprite; @image);
+	
+	width: @spriteWidth;
+	height: @spriteHeight;
+}
+
+.spriteWidth(@sprite; @image) {
+	.spriteVars(@sprite; @image);
+	
+	width: @spriteWidth;
+}
+
+.spriteHeight(@sprite; @image) {
+	.spriteVars(@sprite; @image);
+	
+	height: @spriteHeight;
+}
+
+.spriteBgSize(@sprite; @image) {
+	.spriteVars(@sprite; @image);
+	
+	background-size: @spriteSize;
+}
+
+.spriteBgPosition(@sprite; @image) {
+	.spriteVars(@sprite; @image);
+	
+	background-position: @spriteOffset;
+}
+
+.spriteBgImage(@sprite; @image) {
+	.spriteVars(@sprite; @image);
+	
+	background-image: @spriteImage;
+}

@@ -1,0 +1,133 @@
+//
+// fixed position mixins
+//
+// fix(left, top)
+// fix(left, top, zIndex)
+// fixR(right, top)
+// fixR(right, top, zIndex)
+// fixB(left, bottom)
+// fixB(left, bottom, zIndex)
+// fixRB(right, bottom)
+// fixRB(right, bottom, zIndex)
+//
+// when unit is not specified, px is appended
+// when passed z-index with unit, the unit is stripped
+//
+
+// with specified left and top offset
+.fix(@left; @top; @z: auto) when (isunit(@left, '')) and (isunit(@top, '')) {
+	position: fixed;
+	top: unit(@top, px);
+	left: unit(@left, px);
+}
+
+.fix(@left; @top; @z: auto) when (isunit(@left, '')) and not(isunit(@top, '')) {
+	position: fixed;
+	top: @top;
+	left: unit(@left, px);
+}
+
+.fix(@left; @top; @z: auto) when not(isunit(@left, '')) and (isunit(@top, '')) {
+	position: fixed;
+	top: unit(@top, px);
+	left: @left;
+}
+
+.fix(@left; @top; @z: auto) when not(isunit(@left, '')) and not(isunit(@top, '')) {
+	position: fixed;
+	top: @top;
+	left: @left;
+}
+
+// with specified right and top offset
+.fixR(@right; @top; @z: auto) when (isunit(@right, '')) and (isunit(@top, '')) {
+	position: fixed;
+	top: unit(@top, px);
+	right: unit(@right, px);
+}
+
+.fixR(@right; @top; @z: auto) when (isunit(@right, '')) and not(isunit(@top, '')) {
+	position: fixed;
+	top: @top;
+	right: unit(@right, px);
+}
+
+.fixR(@right; @top; @z: auto) when not(isunit(@right, '')) and (isunit(@top, '')) {
+	position: fixed;
+	top: unit(@top, px);
+	right: @right;
+}
+
+.fixR(@right; @top; @z: auto) when not(isunit(@right, '')) and not(isunit(@top, '')) {
+	position: fixed;
+	top: @top;
+	right: @right;
+}
+
+// with specified left and bottom offset
+.fixB(@left; @bottom; @z: auto) when (isunit(@left, '')) and (isunit(@bottom, '')) {
+	position: fixed;
+	bottom: unit(@bottom, px);
+	left: unit(@left, px);
+}
+
+.fixB(@left; @bottom; @z: auto) when (isunit(@left, '')) and not(isunit(@bottom, '')) {
+	position: fixed;
+	bottom: @bottom;
+	left: unit(@left, px);
+}
+
+.fixB(@left; @bottom; @z: auto) when not(isunit(@left, '')) and (isunit(@bottom, '')) {
+	position: fixed;
+	bottom: unit(@bottom, px);
+	left: @left;
+}
+
+.fixB(@left; @bottom; @z: auto) when not(isunit(@left, '')) and not(isunit(@bottom, '')) {
+	position: fixed;
+	bottom: @bottom;
+	left: @left;
+}
+
+// with specified right and bottom offset
+.fixRB(@right; @bottom; @z: auto) when (isunit(@right, '')) and (isunit(@bottom, '')) {
+	position: fixed;
+	bottom: unit(@bottom, px);
+	right: unit(@right, px);
+}
+
+.fixRB(@right; @bottom; @z: auto) when (isunit(@right, '')) and not(isunit(@bottom, '')) {
+	position: fixed;
+	bottom: @bottom;
+	right: unit(@right, px);
+}
+
+.fixRB(@right; @bottom; @z: auto) when not(isunit(@right, '')) and (isunit(@bottom, '')) {
+	position: fixed;
+	bottom: unit(@bottom, px);
+	right: @right;
+}
+
+.fixRB(@right; @bottom; @z: auto) when not(isunit(@right, '')) and not(isunit(@bottom, '')) {
+	position: fixed;
+	bottom: @bottom;
+	right: @right;
+}
+
+// with specified z-index
+.fix(@x; @y; @z) {
+	z-index: unit(@z);
+}
+
+.fixR(@x; @y; @z) {
+	z-index: unit(@z);
+}
+
+.fixB(@x; @y; @z) {
+	z-index: unit(@z);
+}
+
+.fixRB(@x; @y; @z) {
+	z-index: unit(@z);
+}
+

@@ -1,0 +1,133 @@
+//
+// absolute position mixins
+//
+// abs(left, top)
+// abs(left, top, zIndex)
+// absR(right, top)
+// absR(right, top, zIndex)
+// absB(left, bottom)
+// absB(left, bottom, zIndex)
+// absRB(right, bottom)
+// absRB(right, bottom, zIndex)
+//
+// when unit is not specified, px is appended
+// when passed z-index with unit, the unit is stripped
+//
+
+// with specified left and top offset
+.abs(@left; @top; @z: auto) when (isunit(@left, '')) and (isunit(@top, '')) {
+	position: absolute;
+	top: unit(@top, px);
+	left: unit(@left, px);
+}
+
+.abs(@left; @top; @z: auto) when (isunit(@left, '')) and not(isunit(@top, '')) {
+	position: absolute;
+	top: @top;
+	left: unit(@left, px);
+}
+
+.abs(@left; @top; @z: auto) when not(isunit(@left, '')) and (isunit(@top, '')) {
+	position: absolute;
+	top: unit(@top, px);
+	left: @left;
+}
+
+.abs(@left; @top; @z: auto) when not(isunit(@left, '')) and not(isunit(@top, '')) {
+	position: absolute;
+	top: @top;
+	left: @left;
+}
+
+// with specified right and top offset
+.absR(@right; @top; @z: auto) when (isunit(@right, '')) and (isunit(@top, '')) {
+	position: absolute;
+	top: unit(@top, px);
+	right: unit(@right, px);
+}
+
+.absR(@right; @top; @z: auto) when (isunit(@right, '')) and not(isunit(@top, '')) {
+	position: absolute;
+	top: @top;
+	right: unit(@right, px);
+}
+
+.absR(@right; @top; @z: auto) when not(isunit(@right, '')) and (isunit(@top, '')) {
+	position: absolute;
+	top: unit(@top, px);
+	right: @right;
+}
+
+.absR(@right; @top; @z: auto) when not(isunit(@right, '')) and not(isunit(@top, '')) {
+	position: absolute;
+	top: @top;
+	right: @right;
+}
+
+// with specified left and bottom offset
+.absB(@left; @bottom; @z: auto) when (isunit(@left, '')) and (isunit(@bottom, '')) {
+	position: absolute;
+	bottom: unit(@bottom, px);
+	left: unit(@left, px);
+}
+
+.absB(@left; @bottom; @z: auto) when (isunit(@left, '')) and not(isunit(@bottom, '')) {
+	position: absolute;
+	bottom: @bottom;
+	left: unit(@left, px);
+}
+
+.absB(@left; @bottom; @z: auto) when not(isunit(@left, '')) and (isunit(@bottom, '')) {
+	position: absolute;
+	bottom: unit(@bottom, px);
+	left: @left;
+}
+
+.absB(@left; @bottom; @z: auto) when not(isunit(@left, '')) and not(isunit(@bottom, '')) {
+	position: absolute;
+	bottom: @bottom;
+	left: @left;
+}
+
+// with specified right and bottom offset
+.absRB(@right; @bottom; @z: auto) when (isunit(@right, '')) and (isunit(@bottom, '')) {
+	position: absolute;
+	bottom: unit(@bottom, px);
+	right: unit(@right, px);
+}
+
+.absRB(@right; @bottom; @z: auto) when (isunit(@right, '')) and not(isunit(@bottom, '')) {
+	position: absolute;
+	bottom: @bottom;
+	right: unit(@right, px);
+}
+
+.absRB(@right; @bottom; @z: auto) when not(isunit(@right, '')) and (isunit(@bottom, '')) {
+	position: absolute;
+	bottom: unit(@bottom, px);
+	right: @right;
+}
+
+.absRB(@right; @bottom; @z: auto) when not(isunit(@right, '')) and not(isunit(@bottom, '')) {
+	position: absolute;
+	bottom: @bottom;
+	right: @right;
+}
+
+// with specified z-index
+.abs(@x; @y; @z) {
+	z-index: unit(@z);
+}
+
+.absR(@x; @y; @z) {
+	z-index: unit(@z);
+}
+
+.absB(@x; @y; @z) {
+	z-index: unit(@z);
+}
+
+.absRB(@x; @y; @z) {
+	z-index: unit(@z);
+}
+

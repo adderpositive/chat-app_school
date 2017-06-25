@@ -1,0 +1,44 @@
+//
+// placeholder definition
+//
+// placeholders(rules)
+//
+// example how to use it globally for all elements:
+// .placeholder({
+//     color: red;
+//     font-style: italic;
+// })
+//
+// example how to use it for specified element:
+// input{
+//     .placeholder({
+//         color: red;
+//         font-style: italic;
+//     })
+// }
+//
+// example how to use it for children of specified element:
+// input{
+//     *{
+//         .placeholder({
+//             color: red;
+//             font-style: italic;
+//         })
+//     }
+// }
+//
+
+.placeholder(@rules) {
+	&::-webkit-input-placeholder{
+		@rules();
+	}
+	&:-moz-placeholder{
+		@rules();
+	}
+	&::-moz-placeholder{
+		@rules();
+	}
+	&:-ms-input-placeholder{
+		@rules();
+	}
+}

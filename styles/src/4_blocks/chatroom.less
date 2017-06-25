@@ -1,0 +1,124 @@
+.chatroom {
+	display: flex;
+	height: 100vh;
+	overflow: hidden;
+
+	&-people {
+		.rel(10);
+		flex: none;
+		width: 320px;
+		.bgAdd(@blue);
+		box-shadow: 5px 0 20px @shadow;
+		
+		&__wrap {
+			min-height: 200px;
+			max-height: 70vh;
+			overflow: auto;
+			margin-top: 20px;
+			padding: 0 20px 20px 35px;
+		}
+	}
+
+	&__heading {
+		.rel();
+		margin-top: 25px;
+		margin-left: 20px;
+		.text(@white; 20);
+		letter-spacing: .02em;
+		margin-bottom: 0;
+		padding-bottom: 10px;
+
+		&::after {
+			content: "";
+			.absRB(0; -1; 1);
+			width: 100%;
+			height: 1px;
+			.gradient(horizontal; @white; @blue);
+		}
+	}
+
+	&-buttons {
+		width: 100%;
+		.absB(0;0);
+
+		&__item {
+			display: block;
+			.text(@white; 50px; center; 20; none);
+			transition: background-color .2s;
+
+			&:hover {
+				.text(@white);
+			}
+			
+			&.red {
+				.bgAdd(@red);
+				
+				&:hover {
+					.bgAdd(darken(@red, 15%));
+				}
+			}
+
+			&.yellow {
+				.bgAdd(@yellow);
+				
+				&:hover {
+					.bgAdd(darken(@yellow, 15%));
+				}
+			}
+
+			&.purple {
+				.bgAdd(@purple2);
+				
+				&:hover {
+					.bgAdd(darken(@purple2, 15%));
+				}
+			}
+
+			&.green {
+				.bgAdd(@green2);
+				
+				&:hover {
+					.bgAdd(darken(@green2, 15%));
+				}
+			}
+		}
+	}
+
+	&-wrap {
+		flex: auto;
+		.rel();
+		padding-top: 20px;
+		padding-bottom: 140px;
+		height: 100%;
+	}
+
+	&-content {
+		max-height: 100%;
+		padding: 0 20px 20px 20px;
+		overflow: auto;
+	}
+
+	&-message {
+		.absB(0;0);
+		margin-bottom: 0;
+		height: 100px;
+		width: 100%;
+
+		&__input {
+			height: 100px;
+			border: 0;
+			border-top: 1px solid @red;
+			border-radius: 0;
+			width: 100%;
+			margin-bottom: 0;
+			resize: none;
+			padding-left: 20px;
+
+			&:hover,
+			&:focus {
+				border: 0;
+				border-top: 1px solid @blue;
+			}
+		}
+	}
+}

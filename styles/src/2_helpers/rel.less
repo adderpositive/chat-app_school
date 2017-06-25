@@ -1,0 +1,52 @@
+//
+// relative position mixins
+//
+// rel()
+// rel(zIndex)
+// rel(left, top)
+// rel(left, top, zIndex)
+//
+// when unit is not specified, px is appended
+// when passed z-index with unit, the unit is stripped
+//
+
+// with specified left and top offset
+.rel(@left; @top; @z: auto) when (isunit(@left, '')) and (isunit(@top, '')) {
+	position: relative;
+	top: unit(@top, px);
+	left: unit(@left, px);
+}
+
+.rel(@left; @top; @z: auto) when (isunit(@left, '')) and not(isunit(@top, '')) {
+	position: relative;
+	top: @top;
+	left: unit(@left, px);
+}
+
+.rel(@left; @top; @z: auto) when not(isunit(@left, '')) and (isunit(@top, '')) {
+	position: relative;
+	top: unit(@top, px);
+	left: @left;
+}
+
+.rel(@left; @top; @z: auto) when not(isunit(@left, '')) and not(isunit(@top, '')) {
+	position: relative;
+	top: @top;
+	left: @left;
+}
+
+// with specified z-index
+.rel(@x; @y; @z) {
+	z-index: unit(@z);
+}
+
+// with no params
+.rel() {
+	position: relative;
+}
+
+// with only z-index specified
+.rel(@z) {
+	position: relative;
+	z-index: unit(@z);
+}

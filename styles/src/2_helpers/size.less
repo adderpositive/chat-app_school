@@ -1,0 +1,41 @@
+//
+// dimension mixins
+//
+// size(width, height)
+// size(dimension) - for square definition
+//
+// when unit is not specified, px is appended
+//
+
+// with defined width and height
+.size(@width; @height) when (isunit(@width, '')) and (isunit(@height, '')) {
+	width: unit(@width, px);
+	height: unit(@height, px);
+}
+
+.size(@width; @height) when not(isunit(@width, '')) and (isunit(@height, '')) {
+	width: @width;
+	height: unit(@height, px);
+}
+
+.size(@width; @height) when (isunit(@width, '')) and not(isunit(@height, '')) {
+	width: unit(@width, px);
+	height: @height;
+}
+
+//.size(@width; @height) when not(isunit(@width, '')) and not(isunit(@height, '')) {
+.size(@width; @height) when (default()) {
+	width: @width;
+	height: @height;
+}
+
+// square dimesion
+.size(@dim) when (isunit(@dim, '')) {
+	width: unit(@dim, px);
+	height: unit(@dim, px);
+}
+
+.size(@dim) when (default()) {
+	width: @dim;
+	height: @dim;
+}

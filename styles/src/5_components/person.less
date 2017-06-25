@@ -1,0 +1,82 @@
+.person {
+	position: relative;
+
+	&:hover .person-wrap {
+		display: block;
+	}
+
+	&__login {
+		.text(@white; 15);
+		text-shadow: 0 1px 5px lighten(@black, 10%);
+		.ellipsis();
+
+		&--admin {
+			.text(700; @yellow);
+		}
+
+		&--active {
+			.text(700);
+		}
+	}
+
+	&-wrap {
+		display: none;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		width: 100%;
+		z-index: 100;
+		background-color: @white;
+	}
+
+	&__button {
+		display: block;
+		.text(@white; 30px; center; 16; none);
+		transition: background-color .2s;
+
+		&:hover {
+			color: @white;
+		}
+
+		&.red {
+			.bgAdd(@red);
+				
+			&:hover {
+				.bgAdd(darken(@red, 15%));
+			}
+		}
+
+		&.green {
+			.bgAdd(@green2);
+			
+			&:hover {
+				.bgAdd(darken(@green2, 15%));
+			}
+		}
+	}
+
+	&-form {
+		margin-bottom: 0;
+		
+		&__area {
+			margin-bottom: 0;
+			width: 100%;
+			resize: none;
+			border: 0;
+			border-radius: 0;
+		}
+	}
+}
+
+input[type="submit"].person__button--form {
+	display: block;
+	height: 30px;
+	.text(@white; 30px; center; 16; none; 400);
+	text-transform: none;
+	transition: background-color .2s;
+	width: 100%;
+	border: 0;
+	border-radius: 0;
+	margin-bottom: 0;
+	margin-top: -7px;
+}

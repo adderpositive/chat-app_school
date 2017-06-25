@@ -1,0 +1,51 @@
+// 
+// loop mixins
+// 
+// for(from; to; rules)
+// for(to; rules)
+// 
+// second form is a shorthand for for(1; to; rules)
+// when from is greater than to, counting is descending
+// inside rules, variable @i holds value of couter for current loop
+// 
+// example:
+// .example{
+//   .for(2; 4; {
+//     &:nth-child(@{i}){
+//       content: @i;
+//     }
+//   });
+// }
+// 
+// output:
+// .example:nth-child(2) {
+//   content: 2;
+// }
+// .example:nth-child(3) {
+//   content: 3;
+// }
+// .example:nth-child(4) {
+//   content: 4;
+// }
+
+//from i to j ascending order
+.for(@i; @j; @rules) when (@i < @j){
+	@rules();
+	.for(@i + 1; @j; @rules);
+}
+
+//from i to j descending order
+.for(@i; @j; @rules) when (@i > @j){
+	@rules();
+	.for(@i - 1; @j; @rules);
+}
+
+//last iteration
+.for(@i; @j; @rules) when (@i = @j){
+	@rules();
+}
+
+//shorthand from 1 to i
+.for(@i; @rules){
+	.for(1; @i; @rules);
+}

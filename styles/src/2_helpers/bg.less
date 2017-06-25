@@ -1,0 +1,380 @@
+//
+// background mixins
+//
+// bg([arg1 ... arg8])
+// bgAdd([arg1 ... arg8])
+// bg(sprite; sprite; image; [arg1 ... arg6])
+// bgAdd(sprite; sprite; image; [arg1 ... arg6])
+// bg(at2x; image; size; [arg1 ... arg6])
+// bgAdd(at2x; image; size; [arg1 ... arg6])
+// bg(at2x; sprite; sprite; image; [arg1 ... arg5])
+// bgAdd(at2x; sprite; sprite; image; [arg1 ... arg5])
+//
+// important note:
+// image name can only be set with single quotes, double quotes will produce syntax error
+//
+// when unit is not specified in position or size, px is appended
+//
+// sprites are supported via keyword sprite as first argument, followed by sprite name and image name
+// sprite example:
+// .bg(sprite; 'icons'; 'ico-home');
+//
+// use of sprite keyword emulates setting image and position, so another definition of position is taken as size definition
+// currently there is no mechanism to set position in one definition if sprite is used
+// the only way, how to set position is to set sprite as background and the set position with .bgAdd(), like this:
+// .bg(sprite; 'icons'; 'ico-home');
+// .bgAdd(50px 50px);
+//
+// high-resolution images (for retina displays for example) are supported via at2x keyword as first argument, followed by image name and its size
+// example:
+// .bg(at2x; 'image.png'; 150px 100px);
+//
+// hight-resolution sprites are supported via two keywords - first is at2x, second is sprite, followed by sprite name and image name
+// example:
+// .bg(at2x; sprite; 'icons'; 'ico-home');
+//
+
+.bg(at2x; sprite; @ssprite; @simage; @arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: '') {
+	.spriteVars(@ssprite; @simage);
+	.bg(@spriteFile; @spriteOffset; @arg1; @arg2; @arg3; @arg4; @arg5);
+	background-size: @spriteTotalSize;
+	
+	@media
+	only screen and (-webkit-min-device-pixel-ratio: 2),
+	only screen and (min--moz-device-pixel-ratio: 2),
+	only screen and (-o-min-device-pixel-ratio: 2/1),
+	only screen and (min-device-pixel-ratio: 2),
+	only screen and (min-resolution: 192dpi),
+	only screen and (min-resolution: 2dppx) { 
+		.spriteVars(@ssprite; '@{simage}-2x');
+		background-image: @spriteImage;
+	}
+}
+
+.bg(at2x; @at2image; @at2size; @arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: ''; @arg6: '') when not(@at2image = sprite) {
+	.bg(@at2image; @arg1; @arg2; @arg3; @arg4; @arg5; @arg6);
+	background-size: @at2size;
+	
+	@media
+	only screen and (-webkit-min-device-pixel-ratio: 2),
+	only screen and (min--moz-device-pixel-ratio: 2),
+	only screen and (-o-min-device-pixel-ratio: 2/1),
+	only screen and (min-device-pixel-ratio: 2),
+	only screen and (min-resolution: 192dpi),
+	only screen and (min-resolution: 2dppx) { 
+		@imgName: `"@{at2image}".slice(1, "@{at2image}".lastIndexOf("."))`;
+		@imgExt: `"@{at2image}".slice("@{at2image}".lastIndexOf("."), -1)`;
+		
+		background-image: url('@{imagesDir}@{imgName}@2x@{imgExt}');
+	}
+}
+
+.bg(sprite; @sprite; @image; @arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: ''; @arg6: '') {
+	.spriteVars(@sprite; @image);
+	.bg(@spriteFile; @spriteOffset; @arg1; @arg2; @arg3; @arg4; @arg5; @arg6);
+}
+
+.bg(@arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: ''; @arg6: ''; @arg7: ''; @arg8: '') when not(@arg1 = sprite) and not(@arg1 = at2x) {
+	._bgParse();
+	._parseArgsStep1(@arg1; @arg2; @arg3; @arg4; @arg5; @arg6; @arg7; @arg8);
+	._parseArgsStep2(@args);
+	._handleRepeat(@prerepeat);
+	
+	//when image was explicitly set to none
+	._bg(1; @color; @image; @position; @repeat; @size; @origin; @clip; @attachment) when ("@{size}" = "") {
+		background: none @color @position @repeat @origin @clip @attachment;
+	}
+	
+	._bg(1; @color; @image; @position; @repeat; @size; @origin; @clip; @attachment) when not("@{size}" = "") {
+		background: none @color @position @repeat @origin @clip @attachment;
+		background-size: @size;
+	}
+	
+	//when image was not set at all
+	._bg(0; @color; @image; @position; @repeat; @size; @origin; @clip; @attachment) when ("@{size}" = "") and ("@{image}" = "") {
+		background: @color @position @repeat @origin @clip @attachment;
+	}
+	
+	._bg(0; @color; @image; @position; @repeat; @size; @origin; @clip; @attachment) when not("@{size}" = "") and ("@{image}" = "") {
+		background: @color @position @repeat @origin @clip @attachment;
+		background-size: @size;
+	}
+	
+	//when image was set
+	._bg(0; @color; @image; @position; @repeat; @size; @origin; @clip; @attachment) when ("@{size}" = "") and not("@{image}" = "") {
+		background: @color url('@{imagesDir}@{image}') @position @repeat @origin @clip @attachment;
+	}
+	
+	._bg(0; @color; @image; @position; @repeat; @size; @origin; @clip; @attachment) when (default()) {
+		background: @color url('@{imagesDir}@{image}') @position @repeat @origin @clip @attachment;
+		background-size: @size;
+	}
+	
+	//call mixin
+	._bg(@imageNone; @color; @image; @position; @repeat; @size; @origin; @clip; @attachment);
+}
+
+.bgAdd(at2x; sprite; @ssprite; @simage; @arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: '') {
+	.spriteVars(@ssprite; @simage);
+	.bgAdd(@spriteFile; @spriteOffset; @arg1; @arg2; @arg3; @arg4; @arg5);
+	background-size: @spriteTotalSize;
+	
+	@media
+	only screen and (-webkit-min-device-pixel-ratio: 2),
+	only screen and (min--moz-device-pixel-ratio: 2),
+	only screen and (-o-min-device-pixel-ratio: 2/1),
+	only screen and (min-device-pixel-ratio: 2),
+	only screen and (min-resolution: 192dpi),
+	only screen and (min-resolution: 2dppx) { 
+		.spriteVars(@ssprite; '@{simage}-2x');
+		background-image: @spriteImage;
+	}
+}
+
+.bgAdd(at2x; @at2image; @at2size; @arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: ''; @arg6: '') when not(@at2image = sprite) {
+	.bgAdd(@at2image; @arg1; @arg2; @arg3; @arg4; @arg5; @arg6);
+	background-size: @at2size;
+	
+	@media
+	only screen and (-webkit-min-device-pixel-ratio: 2),
+	only screen and (min--moz-device-pixel-ratio: 2),
+	only screen and (-o-min-device-pixel-ratio: 2/1),
+	only screen and (min-device-pixel-ratio: 2),
+	only screen and (min-resolution: 192dpi),
+	only screen and (min-resolution: 2dppx) { 
+		@imgName: `"@{at2image}".slice(1, "@{at2image}".lastIndexOf("."))`;
+		@imgExt: `"@{at2image}".slice("@{at2image}".lastIndexOf("."), -1)`;
+		
+		background-image: url('@{imagesDir}@{imgName}@2x@{imgExt}');
+	}
+}
+
+.bgAdd(sprite; @sprite; @image; @arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: ''; @arg6: '') {
+	.spriteVars(@sprite; @image);
+	.bgAdd(@spriteFile; @spriteOffset; @arg1; @arg2; @arg3; @arg4; @arg5; @arg6);
+}
+
+.bgAdd(@arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: ''; @arg6: ''; @arg7: ''; @arg8: '') when not(@arg1 = sprite) and not(@arg1 = at2x) {
+	._bgParse();
+	._parseArgsStep1(@arg1; @arg2; @arg3; @arg4; @arg5; @arg6; @arg7; @arg8);
+	._parseArgsStep2(@args);
+	@repeat: @prerepeat;
+	
+	._color(@arg) when not("@{arg}" = "") {
+		background-color: @arg;
+	}
+	._position(@arg) when not("@{arg}" = "") {
+		background-position: @arg;
+	}
+	._repeat(@arg) when not("@{arg}" = "") {
+		background-repeat: @arg;
+	}
+	._size(@arg) when not("@{arg}" = "") {
+		background-size: @arg;
+	}
+	._origin(@arg) when not("@{arg}" = "") {
+		background-origin: @arg;
+	}
+	._clip(@arg) when not("@{arg}" = "") {
+		background-clip: @arg;
+	}
+	._attachment(@arg) when not("@{arg}" = "") {
+		background-attachment: @arg;
+	}
+	._image(@arg) when not("@{arg}" = "") {
+		background-image: url('@{imagesDir}@{image}');
+	}
+	._imageNone(@arg) when (@arg = 1) {
+		background-image: none;
+	}
+	
+	._color(@color);
+	._position(@position);
+	._repeat(@repeat);
+	._size(@size);
+	._origin(@origin);
+	._clip(@clip);
+	._attachment(@attachment);
+	._imageNone(@imageNone);
+	._image(@image);
+}
+
+._bgParse() {
+	._parseArgsStep1(@arg1: ''; @arg2: ''; @arg3: ''; @arg4: ''; @arg5: ''; @arg6: ''; @arg7: ''; @arg8: ''){
+		@args: ~`(function(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+			var i,
+				result = '',
+				bg = {
+					color: '',
+					image: '',
+					imageNone: 0,
+					position: '',
+					repeat: '',
+					size: '',
+					origin: '',
+					clip: '',
+					attachment: ''
+				};
+
+			//assign all arguments to properties
+			for (i = 0; i < arguments.length; i++) {
+				if (arguments[i] !== null) {
+					res = assignToProperty(arguments[i]);
+				}
+			}
+
+			//add px to numbers without unit
+			bg.position = addPx(bg.position);
+			bg.size = addPx(bg.size);
+
+			//concate for further processing
+			result = '"';
+			result += bg.color + "|";
+			result += bg.image + "|";
+			result += bg.position + "|";
+			result += bg.repeat + "|";
+			result += bg.size + "|";
+			result += bg.origin + "|";
+			result += bg.clip + "|";
+			result += bg.attachment + "|";
+			result += bg.imageNone;
+			result += '"';
+
+			//remove commas
+			if (/^[^, ]*,/.test(result)) {
+				result = result.replace(/(?:,)(?![^(]*\))/g, '');
+			}
+
+			return result;
+
+			function assignToProperty(arg) {
+				if (isString(arg)) {
+					//string is definitely image
+					bg.image = arg;
+					bg.imageNone = 0;
+				} else if (isNumber(arg)) {
+					//if it is number, it can be either position or size
+					if (bg.position === '') {
+						bg.position = arg;
+					} else {
+						bg.size = arg;
+					}
+				} else if (isColor(arg)) {
+					//well, color is simply color
+					bg.color = arg;
+				} else if (isKeyword(arg)) {
+					if (isSizeKeyword(arg)) {
+						bg.size = arg;
+					} else if (isBoxKeyword(arg)) {
+						//preserve W3C standard of setting origin and clip
+						if (bg.origin === '') {
+							bg.origin = arg;
+							bg.clip = arg;
+						} else {
+							bg.clip = arg;
+						}
+					} else if (isAttachmentKeyword(arg)) {
+						bg.attachment = arg;
+					} else if (isPositionKeyword(arg)) {
+						bg.position = arg;
+					} else if (isRepeatKeyword(arg)) {
+						bg.repeat = arg;
+					} else if (isImageKeyword(arg)) {
+						bg.imageNone = 1;
+						bg.image = '';
+					} else {
+						bg.color = arg;
+					}
+				}
+			}
+
+			function isString(arg) {
+				//string starts with quote
+				return /^('|\")/.test(arg);
+			}
+
+			function isNumber(arg) {
+				return /^-?\d/.test(arg);
+			}
+
+			function isColor(arg) {
+				//test for hex, rgb(a) or hsl(a) notation
+				return /^(#|rgb|rgba|hsl|hsla)/.test(arg);
+			}
+
+			function isKeyword(arg) {
+				return /^[a-z]/.test(arg);
+			}
+
+			function isSizeKeyword(arg) {
+				return /cover|contain|auto/.test(arg);
+			}
+
+			function isBoxKeyword(arg) {
+				return /(border|padding|content)-box/.test(arg);
+			}
+
+			function isAttachmentKeyword(arg) {
+				return /(scroll|fixed|local)/.test(arg);
+			}
+
+			function isPositionKeyword(arg) {
+				return /(top|bottom|center|left|right)/.test(arg);
+			}
+
+			function isRepeatKeyword(arg) {
+				return /(repeat|space|round)/.test(arg);
+			}
+
+			function isImageKeyword(arg) {
+				return /none/.test(arg);
+			}
+
+			function addPx(arg) {
+				//regexs from lesshat (http://lesshat.madebysource.com/)
+				var numRegex = /\d/gi,
+					numWithoutValue = /(?:\s|^)(\.?\d+\.?\d*)(?![^(]*\)|\w|%|\.)/gi; 
+
+				if (numRegex.test(arg)) {
+					arg = arg.replace(numWithoutValue, function(match) {
+						return (match == 0) && match || match + 'px';
+					});
+				}
+
+				return arg;
+			}
+		}(
+			(function(){var e="@{arg1}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg2}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg3}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg4}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg5}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg6}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg7}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}()),
+			(function(){var e="@{arg8}";return e === "''" ? null : e.replace(/^\[|\]$/g,"")}())
+		))`;
+	}
+
+	._parseArgsStep2(@args) {
+		@color: ~`(function(args) { return args.split("|")[0]; }(@{args}))`;
+		@position: ~`(function(args) { return args.split("|")[2]; }(@{args}))`;
+		@prerepeat: ~`(function(args) { return args.split("|")[3]; }(@{args}))`;
+		@size: ~`(function(args) { return args.split("|")[4]; }(@{args}))`;
+		@origin: ~`(function(args) { return args.split("|")[5]; }(@{args}))`;
+		@clip: ~`(function(args) { return args.split("|")[6]; }(@{args}))`;
+		@attachment: ~`(function(args) { return args.split("|")[7]; }(@{args}))`;
+
+		@preimage: ~`(function(args) { return args.split("|")[1].replace(/'/g, ""); }(@{args}))`;
+		@image: %('%s', @preimage); //make it real string
+
+		@imageNone: ~`(function(args) { return args.split("|")[8].replace(/'/g, ""); }(@{args}))`;
+	}
+}
+
+._handleRepeat(@repeatArg) when ("@{repeatArg}" = "") {
+	@repeat: no-repeat;
+}
+
+._handleRepeat(@repeatArg) when (default()) {
+	@repeat: @repeatArg;
+}
